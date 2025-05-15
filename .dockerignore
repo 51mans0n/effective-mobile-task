@@ -4,3 +4,5 @@
 **/*_test.go
 dist/
 coverage.out
+.env
+.idea
