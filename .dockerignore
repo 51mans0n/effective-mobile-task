@@ -1,0 +1,6 @@
+.git
+*.md
+*.log
+**/*_test.go
+dist/
+coverage.out
