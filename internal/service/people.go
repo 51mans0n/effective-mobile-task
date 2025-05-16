@@ -1,3 +1,4 @@
+// Package service implements business logic for people management.
 package service
 
 import (
@@ -12,6 +13,7 @@ import (
 	"github.com/51mans0n/effective-mobile-task/internal/repository"
 )
 
+// Service provides business logic for person enrichment and storage.
 type Service struct {
 	repo      repository.PeopleRepo
 	agify     client.Enricher
@@ -19,6 +21,7 @@ type Service struct {
 	nat       client.Enricher
 }
 
+// New creates a new Service instance with repository and API clients.
 func New(repo repository.PeopleRepo) *Service {
 	return &Service{
 		repo:      repo,
@@ -85,18 +88,22 @@ func (s *Service) Create(ctx context.Context, p *model.Person) error {
 	return s.repo.Create(ctx, p)
 }
 
+// List returns a filtered and paginated list of people.
 func (s *Service) List(ctx context.Context, f repository.ListFilter) (*repository.PaginatedPeople, error) {
 	return s.repo.List(ctx, f)
 }
 
+// Get returns a person by UUID.
 func (s *Service) Get(ctx context.Context, id string) (*model.Person, error) {
 	return s.repo.GetByID(ctx, id)
 }
 
+// UpdateName updates name/surname/patronymic fields of a person.
 func (s *Service) UpdateName(ctx context.Context, id string, n, sname, patr string) (bool, error) {
 	return s.repo.UpdateName(ctx, id, n, sname, patr)
 }
 
+// Delete removes a person from storage by UUID.
 func (s *Service) Delete(ctx context.Context, id string) (bool, error) {
 	return s.repo.Delete(ctx, id)
 }

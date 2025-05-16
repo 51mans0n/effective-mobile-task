@@ -1,3 +1,4 @@
+// Package migration handles database schema migrations.
 package migration
 
 import (
@@ -10,9 +11,12 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// Во время сборки возьмёт все .sql файлы из папки sql/ и впечатает (embed) их прямо в бинарник
+//
 //go:embed sql/*.sql
 var sqlFiles embed.FS
 
+// Up applies all embedded SQL migrations to the connected database.
 func Up(db *sqlx.DB) error {
 	d, err := iofs.New(sqlFiles, "sql")
 	if err != nil {

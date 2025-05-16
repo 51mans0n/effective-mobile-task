@@ -1,9 +1,11 @@
+// Package logger provides zap-based structured logger.
 package logger
 
 import (
 	"go.uber.org/zap"
 )
 
+// New creates a new zap.Logger based on given log level.
 func New(level string) (*zap.Logger, error) {
 	cfg := zap.NewProductionConfig()
 	switch level {

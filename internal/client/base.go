@@ -31,7 +31,9 @@ func doJSON(req *http.Request, dst any) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("remote %s: %s", req.URL.Host, resp.Status)

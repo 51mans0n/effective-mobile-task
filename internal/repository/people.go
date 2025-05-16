@@ -1,3 +1,4 @@
+// Package repository implements PostgreSQL access using sqlx and squirrel.
 package repository
 
 import (
@@ -10,6 +11,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// PeopleRepo defines data-access interface for people table.
 type PeopleRepo interface {
 	Create(ctx context.Context, p *model.Person) error
 	GetByID(ctx context.Context, id string) (*model.Person, error)
@@ -23,6 +25,7 @@ type repo struct {
 	sb squirrel.StatementBuilderType
 }
 
+// ListFilter defines filters and pagination parameters for listing people.
 type ListFilter struct {
 	Name    string
 	Country string
@@ -31,11 +34,13 @@ type ListFilter struct {
 	Limit   int
 }
 
+// PaginatedPeople represents a paginated response with total count.
 type PaginatedPeople struct {
 	Total   int64
 	Records []*model.Person
 }
 
+// NewPeopleRepo returns a new repository backed by sqlx and squirrel.
 func NewPeopleRepo(db *sqlx.DB) PeopleRepo {
 	return &repo{
 		db: db,

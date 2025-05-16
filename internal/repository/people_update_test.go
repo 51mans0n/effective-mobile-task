@@ -11,7 +11,7 @@ import (
 
 func TestUpdateName(t *testing.T) {
 	db, mock, _ := sqlmock.New()
-	defer db.Close()
+	defer func() { _ = db.Close() }()
 	repo := NewPeopleRepo(sqlx.NewDb(db, "sqlmock"))
 
 	mock.ExpectQuery(`UPDATE people`).

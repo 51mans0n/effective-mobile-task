@@ -2,6 +2,7 @@ package model
 
 import "time"
 
+// Person represents a stored individual with enriched fields.
 type Person struct {
 	ID             string    `db:"id"`
 	Name           string    `db:"name"`

@@ -1,3 +1,4 @@
+// Package main is the entry point of the effective-mobile-task API server.
 package main
 
 import (
@@ -34,7 +35,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer logger.Sync() // flush
+	defer func() { // flush
+		_ = logger.Sync()
+	}()
 
 	db, err := sqlx.Open("pgx", cfg.DBDSN)
 	if err != nil {

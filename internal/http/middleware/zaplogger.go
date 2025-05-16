@@ -1,3 +1,4 @@
+// Package middleware defines custom HTTP middleware for logging, recovery, etc.
 package middleware
 
 import (
@@ -8,6 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// ZapLogger is a chi middleware that logs requests using zap.
 func ZapLogger(l *zap.Logger) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

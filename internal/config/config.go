@@ -1,18 +1,26 @@
+// Package config handles reading app configuration from environment variables.
 package config
 
-import "github.com/kelseyhightower/envconfig"
+import (
+	"github.com/joho/godotenv"
+	"os"
+)
 
+// Config holds app configuration loaded from environment variables.
 type Config struct {
-	AppPort  string `envconfig:"APP_PORT"   default:":8080"`
-	LogLevel string `envconfig:"LOG_LEVEL"  default:"info"` // debug | info | warn | error
-	DBDSN    string `envconfig:"DB_DSN"     default:"postgres://user:pass@localhost:5432/people?sslmode=disable"`
-	CacheTTL string `envconfig:"CACHE_TTL"  default:"24h"`
+	AppPort  string
+	LogLevel string // debug | info | warn | error
+	DBDSN    string
+	CacheTTL string
 }
 
+// Load loads environment config into a Config struct.
 func Load() (*Config, error) {
-	var cfg Config
-	if err := envconfig.Process("", &cfg); err != nil {
-		return nil, err
-	}
-	return &cfg, nil
+	_ = godotenv.Load(".env")
+	return &Config{
+		AppPort:  os.Getenv("APP_PORT"),
+		LogLevel: os.Getenv("LOG_LEVEL"),
+		DBDSN:    os.Getenv("DB_DSN"),
+		CacheTTL: os.Getenv("CACHE_TTL"),
+	}, nil
 }

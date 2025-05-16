@@ -1,8 +1,8 @@
+// Package client provides HTTP clients for external enrichment APIs.
 package client
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/51mans0n/effective-mobile-task/internal/model"
 	"net/http"
@@ -14,6 +14,7 @@ type agifyResp struct {
 
 type agify struct{}
 
+// NewAgify returns an instance of Agify client.
 func NewAgify() Enricher { return &agify{} }
 
 func (a *agify) Enrich(ctx context.Context, name string) (*model.Enriched, error) {
@@ -25,22 +26,8 @@ func (a *agify) Enrich(ctx context.Context, name string) (*model.Enriched, error
 	req, _ := http.NewRequestWithContext(ctx, "GET",
 		fmt.Sprintf("https://api.agify.io/?name=%s", q(name)), nil)
 
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		fmt.Println("AGIFY HTTP error:", err)
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	fmt.Println("AGIFY HTTP status:", resp.StatusCode)
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("agify: bad status %s", resp.Status)
-	}
-
 	var r agifyResp
-	if err := json.NewDecoder(resp.Body).Decode(&r); err != nil {
-		fmt.Println("AGIFY decode error:", err)
+	if err := doJSON(req, &r); err != nil {
 		return nil, err
 	}
 

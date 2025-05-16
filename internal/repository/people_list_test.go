@@ -11,7 +11,7 @@ import (
 
 func TestList(t *testing.T) {
 	db, mock, _ := sqlmock.New()
-	defer db.Close()
+	defer func() { _ = db.Close() }()
 	sqlxdb := sqlx.NewDb(db, "sqlmock")
 	repo := NewPeopleRepo(sqlxdb)
 

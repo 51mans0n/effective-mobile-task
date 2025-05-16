@@ -1,3 +1,4 @@
+// Package handler defines HTTP handlers for the people resource.
 package handler
 
 import (
@@ -36,8 +37,10 @@ type listResp struct {
 	Data []*model.Person `json:"data"`
 }
 
-var v = validator.New() // можно передать извне
+var v = validator.New()
 
+// Create handles the POST /people endpoint.
+//
 // CreatePerson godoc
 // @Summary Create a new person
 // @Description Creates a new person and enriches data from external APIs (agify, genderize, nationalize)
@@ -83,6 +86,8 @@ func Create(svc *service.Service) http.HandlerFunc {
 	}
 }
 
+// List handles the GET /people endpoint.
+//
 // ListPeople godoc
 // @Summary Get all people
 // @Description Returns a paginated list of people, with optional filters by name, gender, and country
