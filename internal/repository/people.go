@@ -2,6 +2,8 @@ package repository
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"github.com/51mans0n/effective-mobile-task/internal/model"
 
 	"github.com/Masterminds/squirrel"
@@ -12,6 +14,8 @@ type PeopleRepo interface {
 	Create(ctx context.Context, p *model.Person) error
 	GetByID(ctx context.Context, id string) (*model.Person, error)
 	List(ctx context.Context, f ListFilter) (*PaginatedPeople, error)
+	UpdateName(ctx context.Context, id string, name, surname, patronymic string) (bool, error)
+	Delete(ctx context.Context, id string) (bool, error)
 }
 
 type repo struct {
@@ -109,4 +113,37 @@ func (r *repo) List(ctx context.Context, f ListFilter) (*PaginatedPeople, error)
 	}
 
 	return &PaginatedPeople{Total: total, Records: list}, nil
+}
+
+func (r *repo) UpdateName(ctx context.Context, id, name, surname, patr string) (bool, error) {
+	qb := r.sb.
+		Update("people").
+		Set("name", name).
+		Set("surname", surname).
+		Set("patronymic", patr).
+		Set("updated_at", squirrel.Expr("now()")).
+		Where(squirrel.Eq{"id": id}).
+		Suffix("RETURNING id")
+
+	q, args, _ := qb.ToSql()
+	var dummy string
+	err := r.db.QueryRowContext(ctx, q, args...).Scan(&dummy)
+	if errors.Is(err, sql.ErrNoRows) {
+		return false, nil
+	}
+	return err == nil, err
+}
+
+func (r *repo) Delete(ctx context.Context, id string) (bool, error) {
+	q, args, _ := r.sb.
+		Delete("people").
+		Where(squirrel.Eq{"id": id}).
+		Suffix("RETURNING id").
+		ToSql()
+	var dummy string
+	err := r.db.QueryRowContext(ctx, q, args...).Scan(&dummy)
+	if errors.Is(err, sql.ErrNoRows) {
+		return false, nil
+	}
+	return err == nil, err
 }

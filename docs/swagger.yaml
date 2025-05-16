@@ -1,0 +1,197 @@
+definitions:
+  handler.createReq:
+    properties:
+      name:
+        type: string
+      patronymic:
+        type: string
+      surname:
+        type: string
+    required:
+    - name
+    - surname
+    type: object
+  handler.listMeta:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      total:
+        type: integer
+    type: object
+  handler.listResp:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.Person'
+        type: array
+      meta:
+        $ref: '#/definitions/handler.listMeta'
+    type: object
+  handler.updateReq:
+    properties:
+      name:
+        type: string
+      patronymic:
+        type: string
+      surname:
+        type: string
+    required:
+    - name
+    - surname
+    type: object
+  model.Person:
+    properties:
+      age:
+        type: integer
+      countryCode:
+        type: string
+      createdAt:
+        type: string
+      gender:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      natProbability:
+        type: number
+      patronymic:
+        type: string
+      surname:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /people:
+    get:
+      description: Returns a paginated list of people, with optional filters by name,
+        gender, and country
+      parameters:
+      - description: Search by name (case-insensitive, partial match)
+        in: query
+        name: name
+        type: string
+      - description: Gender filter (male or female)
+        in: query
+        name: gender
+        type: string
+      - description: Country code (ISO-2)
+        in: query
+        name: country
+        type: string
+      - default: 1
+        description: Page number (>=1)
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Results per page (1-100)
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.listResp'
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: Get all people
+      tags:
+      - People
+    post:
+      consumes:
+      - application/json
+      description: Creates a new person and enriches data from external APIs (agify,
+        genderize, nationalize)
+      parameters:
+      - description: Person data to create
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handler.createReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Person'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: Create a new person
+      tags:
+      - People
+  /people/{id}:
+    delete:
+      parameters:
+      - description: UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: deleted
+          schema:
+            type: string
+        "404":
+          description: not found
+          schema:
+            type: string
+      summary: Delete a person
+    get:
+      parameters:
+      - description: UUID of the person
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Person'
+        "404":
+          description: not found
+          schema:
+            type: string
+      summary: Get a person by ID
+    put:
+      parameters:
+      - description: UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: updated names
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handler.updateReq'
+      responses:
+        "204":
+          description: no content
+          schema:
+            type: string
+        "404":
+          description: not found
+          schema:
+            type: string
+      summary: Update person's name
+swagger: "2.0"

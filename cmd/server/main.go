@@ -9,6 +9,7 @@ import (
 	"github.com/51mans0n/effective-mobile-task/internal/service"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/jmoiron/sqlx"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"go.uber.org/zap"
 	"net/http"
 	"os"
@@ -16,6 +17,7 @@ import (
 	"syscall"
 	"time"
 
+	_ "github.com/51mans0n/effective-mobile-task/docs"
 	mymw "github.com/51mans0n/effective-mobile-task/internal/http/middleware"
 	mylog "github.com/51mans0n/effective-mobile-task/internal/logger"
 	"github.com/go-chi/chi/v5"
@@ -65,6 +67,10 @@ func main() {
 
 	r.Post("/people", handler.Create(svc))
 	r.Get("/people", handler.List(svc))
+	r.Get("/people/{id}", handler.GetByID(svc))
+	r.Put("/people/{id}", handler.Update(svc))
+	r.Delete("/people/{id}", handler.Delete(svc))
+	r.Get("/swagger/*", httpSwagger.WrapHandler)
 
 	srv := &http.Server{
 		Addr:              ":8080",

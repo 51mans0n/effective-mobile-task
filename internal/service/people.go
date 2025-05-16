@@ -88,3 +88,15 @@ func (s *Service) Create(ctx context.Context, p *model.Person) error {
 func (s *Service) List(ctx context.Context, f repository.ListFilter) (*repository.PaginatedPeople, error) {
 	return s.repo.List(ctx, f)
 }
+
+func (s *Service) Get(ctx context.Context, id string) (*model.Person, error) {
+	return s.repo.GetByID(ctx, id)
+}
+
+func (s *Service) UpdateName(ctx context.Context, id string, n, sname, patr string) (bool, error) {
+	return s.repo.UpdateName(ctx, id, n, sname, patr)
+}
+
+func (s *Service) Delete(ctx context.Context, id string) (bool, error) {
+	return s.repo.Delete(ctx, id)
+}
